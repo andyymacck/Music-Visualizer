@@ -40,7 +40,7 @@ function startVisualizer(){
   analyser = analyser || audioContext.createAnalyser();
   
   // Note about: analyser = analyser || audioContext.createAnalyser();
-  // Basically || hear means if analyser is undefined, use the next thing. We use this because if it's already set, it would break things to try it again, so we just leave it as is.
+  // Basically ||  means if analyser is undefined, use the next thing. We use this because if it's already set, it would break things to try it again, so we just leave it as is.
   
   // Then we setup the analyser to get the variables from that we need later.
   bufferLength = analyser.frequencyBinCount;
@@ -51,7 +51,7 @@ function startVisualizer(){
   audioSource.connect(analyser);
   analyser.connect(audioContext.destination);
   
-  // Then we carry on getting down to business.
+  
   activated = true; 
   console.log('StartVisualizer');
   animate(); // Start animation.
@@ -74,6 +74,7 @@ function animate(){
    
 }
 
+//seperate event listener for ability to change audio files
 
 file.addEventListener('change', function(){
   console.log(this.files);
@@ -84,6 +85,7 @@ file.addEventListener('change', function(){
 })
 
   
+// controls specific visual characteristics, in this instance is set for a spiral vortex
 
 function drawVisualiser(bufferLength, x, barWidth, barHeight, dataArray){
   for (let i = 0; i< bufferLength; i++){
