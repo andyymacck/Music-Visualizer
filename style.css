@@ -18,15 +18,21 @@ body{
 }
 
 #musicPlayer {
+   
+    top: 800px;
+    bottom: 3px;
     position: relative;
     width: 25%;
     margin: 50px auto;
     display: block;
+    border: none;
+    
 }
 
 #fileupload{
     position: absolute;
-    top: 150px;
-    color: white;
+    top: 790px;
+    right: 200px;
+    color: grey;
     z-index: 100;
 }
