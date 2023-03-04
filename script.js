@@ -4,6 +4,12 @@ const file = document.getElementById('fileupload');
 const ctx = canvas.getContext('2d');
 const musicPlayer = document.getElementById('musicPlayer');
 const playButton = document.getElementById('playButton');
+const videoElem = document.getElementById("video");
+
+const logElem = document.getElementById("log");
+const startElem = document.getElementById("start");
+const stopElem = document.getElementById("stop");
+
 
 // Global variables,
 let audioSource;
@@ -26,31 +32,72 @@ ctx.shadowColor = 7;
 let audioContext, bufferLength, dataArray;
 
 musicPlayer.addEventListener('play', function(){
-  startVisualizer();
+  startVisualizerFromScreen();
 })
 
 musicPlayer.addEventListener('pause', function(){
   stopVisualizer();
 })
 
-function startVisualizer(){
-  // Using AudioContext we make an audioSource from musicPlayer. Doing this disconnects audio. We also make an analyser.
+const displayMediaOptions = {
+  video: {
+    displaySurface: "window"
+  },
+  audio: false
+};
+
+// Set event listeners for the start and stop buttons
+startElem.addEventListener("click", (_evt) => {
+  console.log("startclick");
+  startVisualizerFromScreen();
+
+  console.log("startcapture()");
+}, false);
+
+stopElem.addEventListener("click", (_evt) => {
+  console.log("stopclick");
+  stopCapture();
+  console.log("stopcapture()");
+}, false);
+
+async function startCapture() {
+  logElem.innerHTML = "";
+  try {
+    videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+    dumpOptionsInfo();
+  } catch (err) {
+    console.error(`Error: ${err}`);
+  }
+}
+
+
+function dumpOptionsInfo() {
+  const videoTrack = videoElem.srcObject.getVideoTracks()[0];
+
+  console.info("Track settings:");
+  console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
+  console.info("Track constraints:");
+  console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
+}
+
+
+async function startVisualizerFromScreen(){
+  
   audioContext = audioContext || new AudioContext();
   audioSource = audioSource || audioContext.createMediaElementSource(musicPlayer);
   analyser = analyser || audioContext.createAnalyser();
+  let desktopStream = await navigator.mediaDevices.getDisplayMedia({ video:true, audio: true });
   
-  // Note about: analyser = analyser || audioContext.createAnalyser();
-  // Basically ||  means if analyser is undefined, use the next thing. We use this because if it's already set, it would break things to try it again, so we just leave it as is.
-  
-  // Then we setup the analyser to get the variables from that we need later.
   bufferLength = analyser.frequencyBinCount;
   dataArray = new Uint8Array(bufferLength);
   analyser.fftSize = 128;
-  
-  // Now we route our disconnected audio stream. First to the analyser and from there back to the output of the audioContext.
-  audioSource.connect(analyser);
-  analyser.connect(audioContext.destination);
-  
+
+ 
+  const source1 = audioContext.createMediaStreamSource(desktopStream);
+  const captureGain = audioContext.createGain();
+  captureGain.gain.value = 0.7;
+  source1.connect(analyser);
+
   
   activated = true; 
   console.log('StartVisualizer');
@@ -74,8 +121,6 @@ function animate(){
    
 }
 
-//seperate event listener for ability to change audio files
-
 file.addEventListener('change', function(){
   console.log(this.files);
   const files = this.files;
@@ -84,8 +129,6 @@ file.addEventListener('change', function(){
   musicPlayer.load();
 })
 
-  
-// controls specific visual characteristics, in this instance is set for a spiral vortex
 
 function drawVisualiser(bufferLength, x, barWidth, barHeight, dataArray){
   for (let i = 0; i< bufferLength; i++){
