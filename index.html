@@ -1,32 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizer</title>
-    <script async src="./script.js"></script>
-    <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screen and Audio Visualizer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-   
-    <canvas id = "canvas1"></canvas>
-    <input type = 'file' id= 'fileupload' accept= 'audio/*' />
-    <audio id = "musicPlayer" controls></audio> 
-    
-
-    <div id = "CaptureButton">   
-        <button type="button" id="start">Start Capture</button>
-        <audio id = "startVisualizerFromScreen" ></audio>
-    </div>
-      
-      <video id="video" autoplay></video>
-      <br />
-      
-      <strong>Log:</strong>
-      
-      <br />
-      <pre id="log"></pre>
-
+  <div class="visualizer-menu">
+    <label for="visualizationType">Select Visualization:</label>
+    <select id="visualizationType">
+      <option value="circular">Circular</option>
+      <option value="bars">Bars</option>
+      <option value="radial">Radial</option>
+      <option value="waveform">Waveform</option>
+    </select>
+    <button id="startScreenCapture">Start Screen Capture</button>
+    <button id="stopScreenCapture" disabled>Stop Screen Capture</button>
+  </div>
+  <canvas id="canvas1"></canvas>
+  <input type="file" id="fileupload" accept="audio/*" style="position:absolute; top:50px; left:10px;">
+  <audio id="musicPlayer" controls style="position:absolute; top:100px; left:10px;"></audio>
+  <script src="script.js"></script>
 </body>
 </html>
